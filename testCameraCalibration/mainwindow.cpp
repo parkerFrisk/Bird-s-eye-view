@@ -1,15 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <opencv4/opencv2/opencv.hpp>
-#include <opencv4/opencv2/core.hpp>
-#include <opencv4/opencv2/core/mat.hpp>
-#include <opencv4/opencv2/calib3d/calib3d.hpp>
-#include <opencv4/opencv2/highgui/highgui.hpp>
-#include <opencv4/opencv2/highgui/highgui_c.h>
-#include <opencv4/opencv2/imgproc/imgproc.hpp>
-#include <opencv4/opencv2/core/utility.hpp>
-#include <opencv4/opencv2/imgcodecs.hpp>
-#include <opencv4/opencv2/videoio.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui_c.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/utility.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/videoio.hpp>
 //#include <stdio.h>
 //#include <iostream>
 //#include <vector>
@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Extracting path of individual image stored in a given directory
     vector<String> images;
     // Path of the folder containing checkerboard images (OBS! key sensitive)
-    string path = "/home/ccs/Pictures/*.jpg";
+    string path = "/opt/*.png";
     qDebug("path ok ");
     glob(path, images);
 
@@ -87,13 +87,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
         //Creating gray scal cpy
         cvtColor(frame,gray,COLOR_BGR2GRAY);
-        namedWindow("Gray", CV_WINDOW_KEEPRATIO);
-        resizeWindow("Gray", 500,500);
-        imshow("Gray",gray);
+//        namedWindow("Gray", CV_WINDOW_KEEPRATIO);
+//        resizeWindow("Gray", 500,500);
+//        imshow("Gray",gray);
 
 
         // Finding checker board corners
-        success = findChessboardCorners(gray, Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_FAST_CHECK + CALIB_CB_NORMALIZE_IMAGE);
+        success = findChessboardCorners(gray, Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, CALIB_RATIONAL_MODEL + CALIB_USE_INTRINSIC_GUESS + CALIB_FIX_PRINCIPAL_POINT);
 
 
 
@@ -166,16 +166,16 @@ MainWindow::MainWindow(QWidget *parent) :
             qDebug("Failed image %d", i+1);
         }
         // Print image with detectec corners
-        namedWindow("Image", CV_WINDOW_KEEPRATIO);
-        resizeWindow("Image", 500,500);
-        imshow("Image",frame);
+//        namedWindow("Image", CV_WINDOW_KEEPRATIO);
+//        resizeWindow("Image", 500,500);
+//        imshow("Image",frame);
 
 
         //waitKey(0);   //wait for 0 to be pressed
 
       }
 
-    destroyAllWindows();
+    //destroyAllWindows();
 
 
 
@@ -214,13 +214,13 @@ MainWindow::MainWindow(QWidget *parent) :
     undistort(distortedIMG, undistortedIMG, cameraMatrix, distCoeffs);
     //fisheye::undistortImage(distortedIMG, undistortedIMG, cameraMatrix, distCoeffs);
 
-    namedWindow("Distorted", CV_WINDOW_KEEPRATIO);  //create window
-    resizeWindow("Distorted", 500,500);             //set window size
-    imshow("Distorted",distortedIMG);
+//    namedWindow("Distorted", CV_WINDOW_KEEPRATIO);  //create window
+//    resizeWindow("Distorted", 500,500);             //set window size
+//    imshow("Distorted",distortedIMG);
 
-    namedWindow("Undistorted", CV_WINDOW_KEEPRATIO);
-    resizeWindow("Undistorted", 500,500);
-    imshow("Undistorted",undistortedIMG);
+//    namedWindow("Undistorted", CV_WINDOW_KEEPRATIO);
+//    resizeWindow("Undistorted", 500,500);
+//    imshow("Undistorted",undistortedIMG);
 
 
 
@@ -228,13 +228,13 @@ MainWindow::MainWindow(QWidget *parent) :
     /** Find homography **/
     //Creating gray scal cpy
     cvtColor(undistortedIMG,gray2,COLOR_BGR2GRAY);
-    namedWindow("Gray", CV_WINDOW_KEEPRATIO);
-    resizeWindow("Gray", 500,500);
-    imshow("Gray",gray2);
+//    namedWindow("Gray", CV_WINDOW_KEEPRATIO);
+//    resizeWindow("Gray", 500,500);
+//    imshow("Gray",gray2);
 
 
     // Finding checker board corners
-    success = findChessboardCorners(gray2, Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_FAST_CHECK + CALIB_CB_NORMALIZE_IMAGE);
+    success = findChessboardCorners(gray2, Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, CALIB_RATIONAL_MODEL + CALIB_USE_INTRINSIC_GUESS + CALIB_FIX_PRINCIPAL_POINT);
 
 
 
@@ -280,18 +280,20 @@ MainWindow::MainWindow(QWidget *parent) :
         birdImage = undistortedIMG.clone();
 
         //warp the image wrt the homography matrix
-        warpPerspective(undistortedIMG, birdImage, H, frame.size(),CV_INTER_LINEAR | CV_WARP_INVERSE_MAP | CV_WARP_FILL_OUTLIERS);
+        warpPerspective(undistortedIMG, birdImage, H, frame.size(), INTER_NEAREST | CV_WARP_INVERSE_MAP | CV_WARP_FILL_OUTLIERS);
 
         // Print birds eye view image
-        namedWindow("Bird", CV_WINDOW_KEEPRATIO);
-        resizeWindow("Bird", 500,500);
-        imshow("Bird",birdImage);
+//        namedWindow("Bird", CV_WINDOW_KEEPRATIO);
+//        resizeWindow("Bird", 500,500);
+//        imshow("Bird",birdImage);
+
+        frame = undistortedIMG;
+        cvtColor(frame, frame, COLOR_BGR2RGB);
+        qt_image = QImage((const unsigned char*) (frame.data), frame.cols, frame.rows, QImage::Format_RGB888);
+        ui->label->setPixmap(QPixmap::fromImage(qt_image));
+        ui->label->resize(ui->label->pixmap()->size());
 
     }
-
-
-
-
 
 
 
@@ -302,9 +304,6 @@ MainWindow::MainWindow(QWidget *parent) :
     /* Getting number of milliseconds as an integer. */
     auto ms_int = duration_cast<milliseconds>(t2 - t1);
     cout << ms_int.count() << "ms\n" << endl;
-
-
-
 
 }
 

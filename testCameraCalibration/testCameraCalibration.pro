@@ -24,9 +24,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-INCLUDEPATH += /usr/local/include/opencv4
 
-LIBS += -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_calib3d -lopencv_imgproc -lopencv_flann -lopencv_features2d -lopencv_dnn -lopencv_ml -lopencv_objdetect -lopencv_photo -lopencv_stitching -lopencv_video -lopencv_videoio
+INCLUDEPATH += /home/ccs/opencv/build/install/include/opencv4
+LIBS += -L/home/ccs/opencv/build/install/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_calib3d -lopencv_imgproc -lopencv_flann -lopencv_features2d -lopencv_dnn -lopencv_ml -lopencv_objdetect -lopencv_photo -lopencv_stitching -lopencv_video -lopencv_videoio
+
 
 SOURCES += \
         main.cpp \

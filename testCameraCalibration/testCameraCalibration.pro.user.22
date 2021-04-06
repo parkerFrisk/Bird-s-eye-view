@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.14.0, 2021-03-12T13:57:45. -->
+<!-- Written by QtCreator 4.14.0, 2021-03-12T10:08:14. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -245,10 +245,10 @@
        <value type="QString"></value>
       </valuelist>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedLocalTimes">
-       <value type="QDateTime">2021-03-12T11:32:45.448</value>
+       <value type="QDateTime">2021-03-12T10:03:32.376</value>
       </valuelist>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedRemoteTimes">
-       <value type="QDateTime">2021-03-12T11:33:48.000</value>
+       <value type="QDateTime">2021-03-12T10:04:41.000</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>

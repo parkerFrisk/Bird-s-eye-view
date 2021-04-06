@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    QImage qt_image;
 };
 
 #endif // MAINWINDOW_H
